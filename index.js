@@ -1,4 +1,4 @@
-import express from 'express';
+import express from 'express'; 
 import session from 'express-session';
 import cookieParser from 'cookie-parser';
 import path from 'path';
@@ -90,6 +90,14 @@ app.get('/', (req, res) => {
 
 // Rota para cadastro de usuários
 app.get('/cadastro', verificarSessao, (req, res) => {
+    const erro = req.query.erro;  // Captura o erro que pode ser passado pela URL
+    const { nome = '', dataNascimento = '', apelido = '' } = req.query;
+    const mensagensErro = {
+        nome: req.query.nomeErro || '',
+        dataNascimento: req.query.dataNascimentoErro || '',
+        apelido: req.query.apelidoErro || ''
+    };
+
     res.send(`
         <!DOCTYPE html>
         <html lang="pt-BR">
@@ -139,18 +147,23 @@ app.get('/cadastro', verificarSessao, (req, res) => {
         <body>
             <div class="container">
                 <h1 class="text-center">Cadastro de Usuários</h1>
+                ${erro ? `<div class="alert alert-danger" role="alert">Todos os campos são obrigatórios e o formato da data precisa ser válido!</div>` : ''}
+                
                 <form method="POST" action="/cadastrarUsuario">
                     <div class="mb-3">
                         <label class="form-label">Nome</label>
-                        <input type="text" name="nome" class="form-control" required>
+                        <input type="text" name="nome" class="form-control" value="${nome}">
+                        ${mensagensErro.nome ? `<div class="text-danger">${mensagensErro.nome}</div>` : ''}
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Data de Nascimento</label>
-                        <input type="date" name="dataNascimento" class="form-control" required>
+                        <input type="date" name="dataNascimento" class="form-control" value="${dataNascimento}">
+                        ${mensagensErro.dataNascimento ? `<div class="text-danger">${mensagensErro.dataNascimento}</div>` : ''}
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Nickname</label>
-                        <input type="text" name="nickname" class="form-control" required>
+                        <label class="form-label">Apelido</label>
+                        <input type="text" name="apelido" class="form-control" value="${apelido}">
+                        ${mensagensErro.apelido ? `<div class="text-danger">${mensagensErro.apelido}</div>` : ''}
                     </div>
                     <button type="submit" class="btn btn-primary">Cadastrar</button>
                 </form>
@@ -165,11 +178,33 @@ app.get('/cadastro', verificarSessao, (req, res) => {
 
 // Processar cadastro
 app.post('/cadastrarUsuario', verificarSessao, (req, res) => {
-    const { nome, dataNascimento, nickname } = req.body;
-    if (!nome || !dataNascimento || !nickname) {
-        return res.send("Todos os campos são obrigatórios!");
+    const { nome, dataNascimento, apelido } = req.body;
+
+    let erro = false;
+    const mensagensErro = {
+        nome: '',
+        dataNascimento: '',
+        apelido: ''
+    };
+
+    if (!nome) {
+        erro = true;
+        mensagensErro.nome = 'O nome é obrigatório!';
     }
-    usuarios.push({ nome, dataNascimento, nickname });
+    if (!dataNascimento || isNaN(new Date(dataNascimento))) {
+        erro = true;
+        mensagensErro.dataNascimento = 'A data de nascimento é obrigatória e deve estar no formato correto!';
+    }
+    if (!apelido) {
+        erro = true;
+        mensagensErro.apelido = 'O Apelido é obrigatório!';
+    }
+
+    if (erro) {
+        return res.redirect(`/cadastro?erro=true&nome=${nome}&dataNascimento=${dataNascimento}&apelido=${apelido}&nomeErro=${mensagensErro.nome}&dataNascimentoErro=${mensagensErro.dataNascimento}&apelidoErro=${mensagensErro.apelido}`);
+    }
+
+    usuarios.push({ nome, dataNascimento, apelido });
     res.redirect('/cadastro');
 });
 
@@ -220,7 +255,7 @@ app.get('/batepapo', verificarSessao, (req, res) => {
                     <div class="mb-3">
                         <label class="form-label">Usuário</label>
                         <select name="usuario" class="form-select" required>
-                            ${usuarios.map(u => `<option value="${u.nickname}">${u.nome}</option>`).join('')}
+                            ${usuarios.map(u => `<option value="${u.apelido}">${u.nome}</option>`).join('')}
                         </select>
                     </div>
                     <div class="mb-3">
