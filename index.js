@@ -33,47 +33,47 @@ app.get('/', (req, res) => {
     const ultimoAcesso = req.cookies.ultimoAcesso || 'Primeiro acesso';
     res.send(`
         <!DOCTYPE html>
-        <html lang="pt-BR">
-        <head>
-            <meta charset="UTF-8">
-            <title>Menu Principal</title>
-            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-            <style>
-                body {
-                    background-color: #f5f5f5;
-                    font-family: Arial, sans-serif;
-                }
-                .container {
-                    background-color: white;
-                    padding: 30px;
-                    border-radius: 10px;
-                    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-                }
-                h1 {
-                    color: #333;
-                }
-                .btn {
-                    margin: 10px;
-                    width: 200px;
-                    font-size: 16px;
-                }
-                .btn-primary {
-                    background-color: #4CAF50;
-                    border-color: #4CAF50;
-                }
-                .btn-primary:hover {
-                    background-color: #45a049;
-                    border-color: #45a049;
-                }
-                .btn-success {
-                    background-color: #2196F3;
-                    border-color: #2196F3;
-                }
-                .btn-success:hover {
-                    background-color: #0b79e2;
-                    border-color: #0b79e2;
-                }
-            </style>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Menu Principal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #e0f7fa; /* Azul claro de fundo */
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #0d47a1; 
+        }
+        .btn {
+            margin: 10px;
+            width: 200px;
+            font-size: 16px;
+        }
+        .btn-primary {
+            background-color: #2196F3;
+            border-color: #2196F3;
+        }
+        .btn-primary:hover {
+            background-color: #1976d2; 
+            border-color: #1976d2;
+        }
+        .btn-success {
+            background-color: #1976d2; 
+            border-color: #1976d2;
+        }
+        .btn-success:hover {
+            background-color: #0d47a1; 
+            border-color: #0d47a1;
+        }
+    </style>
         </head>
         <body>
             <div class="container text-center">
@@ -103,70 +103,70 @@ app.get('/cadastro', verificarSessao, (req, res) => {
 
     res.send(`
         <!DOCTYPE html>
-        <html lang="pt-BR">
-        <head>
-            <meta charset="UTF-8">
-            <title>Cadastro de Usuários</title>
-            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-            <style>
-                body {
-                    background-color: #f0f2f5;
-                    font-family: 'Arial', sans-serif;
-                }
-                .container {
-                    background-color: white;
-                    padding: 40px;
-                    border-radius: 12px;
-                    box-shadow: 0px 6px 18px rgba(0, 0, 0, 0.1);
-                    max-width: 800px;
-                    margin-top: 50px;
-                }
-                h1 {
-                    color: #4CAF50;
-                    font-size: 32px;
-                    margin-bottom: 20px;
-                }
-                .form-control {
-                    margin-bottom: 20px;
-                    border-radius: 8px;
-                    box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
-                }
-                .form-label {
-                    font-weight: bold;
-                }
-                .btn {
-                    width: 100%;
-                    font-size: 18px;
-                    border-radius: 8px;
-                    padding: 12px;
-                }
-                .btn-primary {
-                    background-color: #4CAF50;
-                    border-color: #4CAF50;
-                }
-                .btn-primary:hover {
-                    background-color: #45a049;
-                    border-color: #45a049;
-                }
-                .btn-secondary {
-                    background-color: #f44336;
-                    border-color: #f44336;
-                }
-                .btn-secondary:hover {
-                    background-color: #e53935;
-                    border-color: #e53935;
-                }
-                .list-group-item {
-                    border-radius: 8px;
-                }
-                .col-container {
-                    display: flex;
-                    justify-content: space-between;
-                }
-                .col-container .col {
-                    max-width: 48%;
-                }
-            </style>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro de Usuários</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #e0f7fa; 
+            font-family: 'Arial', sans-serif;
+        }
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0px 6px 18px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin-top: 50px;
+        }
+        h1 {
+            color: #0d47a1; 
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+        .form-control {
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
+        }
+        .form-label {
+            font-weight: bold;
+        }
+        .btn {
+            width: 100%;
+            font-size: 18px;
+            border-radius: 8px;
+            padding: 12px;
+        }
+        .btn-primary {
+            background-color: #2196F3; 
+            border-color: #2196F3;
+        }
+        .btn-primary:hover {
+            background-color: #1976d2; 
+            border-color: #1976d2;
+        }
+        .btn-secondary {
+            background-color: #1976d2; 
+            border-color: #1976d2;
+        }
+        .btn-secondary:hover {
+            background-color: #0d47a1; 
+            border-color: #0d47a1;
+        }
+        .list-group-item {
+            border-radius: 8px;
+        }
+        .col-container {
+            display: flex;
+            justify-content: space-between;
+        }
+        .col-container .col {
+            max-width: 48%;
+        }
+    </style>
         </head>
         <body>
             <div class="container">
