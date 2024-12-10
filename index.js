@@ -6,7 +6,6 @@ import path from 'path';
 const app = express();
 const porta = 3000;
 
-// Middleware
 app.use(session({
     secret: 'M1nh4chav3S3cr3t4',
     resave: false,
@@ -17,11 +16,11 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(process.cwd(), './paginas/publica')));
 
-// Dados em memória
+
 let usuarios = [];
 let mensagens = [];
 
-// Middleware de autenticação
+
 function verificarSessao(req, res, next) {
     if (!req.session.loggedIn) {
         return res.redirect('/login.html');
@@ -29,7 +28,7 @@ function verificarSessao(req, res, next) {
     next();
 }
 
-// Rota principal - Menu
+
 app.get('/', (req, res) => {
     const ultimoAcesso = req.cookies.ultimoAcesso || 'Primeiro acesso';
     res.send(`
@@ -88,15 +87,19 @@ app.get('/', (req, res) => {
     `);
 });
 
-// Rota para cadastro de usuários
+
 app.get('/cadastro', verificarSessao, (req, res) => {
-    const erro = req.query.erro;  // Captura o erro que pode ser passado pela URL
+    const erro = req.query.erro;
     const { nome = '', dataNascimento = '', apelido = '' } = req.query;
     const mensagensErro = {
         nome: req.query.nomeErro || '',
         dataNascimento: req.query.dataNascimentoErro || '',
         apelido: req.query.apelidoErro || ''
     };
+
+    const listaUsuarios = usuarios.map(u => `
+        <li class="list-group-item">${u.nome} (Apelido: ${u.apelido}, Nascimento: ${u.dataNascimento})</li>
+    `).join('') || '<li class="list-group-item text-muted">Nenhum usuário cadastrado ainda.</li>';
 
     res.send(`
         <!DOCTYPE html>
@@ -107,24 +110,35 @@ app.get('/cadastro', verificarSessao, (req, res) => {
             <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
             <style>
                 body {
-                    background-color: #f5f5f5;
-                    font-family: Arial, sans-serif;
+                    background-color: #f0f2f5;
+                    font-family: 'Arial', sans-serif;
                 }
                 .container {
                     background-color: white;
-                    padding: 30px;
-                    border-radius: 10px;
-                    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+                    padding: 40px;
+                    border-radius: 12px;
+                    box-shadow: 0px 6px 18px rgba(0, 0, 0, 0.1);
+                    max-width: 800px;
+                    margin-top: 50px;
                 }
                 h1 {
-                    color: #333;
+                    color: #4CAF50;
+                    font-size: 32px;
+                    margin-bottom: 20px;
                 }
                 .form-control {
                     margin-bottom: 20px;
+                    border-radius: 8px;
+                    box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
+                }
+                .form-label {
+                    font-weight: bold;
                 }
                 .btn {
                     width: 100%;
                     font-size: 18px;
+                    border-radius: 8px;
+                    padding: 12px;
                 }
                 .btn-primary {
                     background-color: #4CAF50;
@@ -142,6 +156,16 @@ app.get('/cadastro', verificarSessao, (req, res) => {
                     background-color: #e53935;
                     border-color: #e53935;
                 }
+                .list-group-item {
+                    border-radius: 8px;
+                }
+                .col-container {
+                    display: flex;
+                    justify-content: space-between;
+                }
+                .col-container .col {
+                    max-width: 48%;
+                }
             </style>
         </head>
         <body>
@@ -149,24 +173,37 @@ app.get('/cadastro', verificarSessao, (req, res) => {
                 <h1 class="text-center">Cadastro de Usuários</h1>
                 ${erro ? `<div class="alert alert-danger" role="alert">Todos os campos são obrigatórios e o formato da data precisa ser válido!</div>` : ''}
                 
-                <form method="POST" action="/cadastrarUsuario">
-                    <div class="mb-3">
-                        <label class="form-label">Nome</label>
-                        <input type="text" name="nome" class="form-control" value="${nome}">
-                        ${mensagensErro.nome ? `<div class="text-danger">${mensagensErro.nome}</div>` : ''}
+                <div class="row col-container">
+                    <div class="col">
+                        <h2>Cadastro de Usuário</h2>
+                        <form method="POST" action="/cadastrarUsuario">
+                            <div class="mb-3">
+                                <label class="form-label">Nome</label>
+                                <input type="text" name="nome" class="form-control" value="${nome}">
+                                ${mensagensErro.nome ? `<div class="text-danger">${mensagensErro.nome}</div>` : ''}
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Data de Nascimento</label>
+                                <input type="date" name="dataNascimento" class="form-control" value="${dataNascimento}">
+                                ${mensagensErro.dataNascimento ? `<div class="text-danger">${mensagensErro.dataNascimento}</div>` : ''}
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Apelido</label>
+                                <input type="text" name="apelido" class="form-control" value="${apelido}">
+                                ${mensagensErro.apelido ? `<div class="text-danger">${mensagensErro.apelido}</div>` : ''}
+                            </div>
+                            <button type="submit" class="btn btn-primary">Cadastrar</button>
+                        </form>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Data de Nascimento</label>
-                        <input type="date" name="dataNascimento" class="form-control" value="${dataNascimento}">
-                        ${mensagensErro.dataNascimento ? `<div class="text-danger">${mensagensErro.dataNascimento}</div>` : ''}
+
+                    <div class="col">
+                        <h2>Usuários Cadastrados</h2>
+                        <ul class="list-group">
+                            ${listaUsuarios}
+                        </ul>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Apelido</label>
-                        <input type="text" name="apelido" class="form-control" value="${apelido}">
-                        ${mensagensErro.apelido ? `<div class="text-danger">${mensagensErro.apelido}</div>` : ''}
-                    </div>
-                    <button type="submit" class="btn btn-primary">Cadastrar</button>
-                </form>
+                </div>
+
                 <div class="text-center mt-3">
                     <a href="/" class="btn btn-secondary">Voltar ao Menu</a>
                 </div>
@@ -176,7 +213,7 @@ app.get('/cadastro', verificarSessao, (req, res) => {
     `);
 });
 
-// Processar cadastro
+
 app.post('/cadastrarUsuario', verificarSessao, (req, res) => {
     const { nome, dataNascimento, apelido } = req.body;
 
@@ -208,7 +245,7 @@ app.post('/cadastrarUsuario', verificarSessao, (req, res) => {
     res.redirect('/cadastro');
 });
 
-// Rota para bate-papo
+
 app.get('/batepapo', verificarSessao, (req, res) => {
     res.send(`
         <!DOCTYPE html>
@@ -280,7 +317,7 @@ app.get('/batepapo', verificarSessao, (req, res) => {
     `);
 });
 
-// Processar mensagens
+
 app.post('/postarMensagem', verificarSessao, (req, res) => {
     const { usuario, mensagem } = req.body;
     if (!usuario || !mensagem.trim()) {
@@ -294,26 +331,26 @@ app.post('/postarMensagem', verificarSessao, (req, res) => {
     res.redirect('/batepapo');
 });
 
-// Rota de login (página estática)
+
 app.get('/login.html', (req, res) => {
     res.sendFile(path.join(process.cwd(), './paginas/publica/login.html'));
 });
 
-// Rota de login (processamento)
+
 app.post('/login', (req, res) => {
     req.session.loggedIn = true;
     res.cookie('ultimoAcesso', new Date().toLocaleString());
     res.redirect('/');
 });
 
-// Logout
+
 app.get('/logout', (req, res) => {
     req.session.destroy();
     res.clearCookie('ultimoAcesso');
     res.send("Você saiu com sucesso! <a href='/'>Voltar ao Menu</a>");
 });
 
-// Inicia o servidor
+
 app.listen(porta, () => {
     console.log(`Servidor rodando em http://localhost:${porta}`);
 });
